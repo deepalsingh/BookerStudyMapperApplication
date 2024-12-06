@@ -2,18 +2,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';  // Import useNavigation hook
 
-const Header = ({ title, navigation }) => {
+const Header = ({ navigation }) => {
   return (
     <View style={styles.headerContainer}>
-      {/* Back Arrow */}
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.arrow}>
-        <Icon name="arrow-back" size={30} color="#333" />
-      </TouchableOpacity>
+      
 
-      {/* Title */}
-      <Text style={styles.headerText}>{title}</Text>
+      {/* Static Title */}
+      <Text style={styles.headerText}>Booker Study Mapper</Text>
     </View>
   );
 };
@@ -31,7 +27,7 @@ const styles = StyleSheet.create({
     marginRight: 10,  // Space between arrow and text
   },
   headerText: {
-    fontSize: 20,
+    fontSize: 20,  // Default size for static title
     fontWeight: 'bold',
     color: '#333',
   },

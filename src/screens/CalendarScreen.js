@@ -7,14 +7,12 @@ import Footer from '../components/Footer';
 const CalendarScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      {/* Header with back button */}
-      <Header title="Calendar" navigation={navigation} />
+      <Header navigation={navigation} />
 
       <View style={styles.content}>
         <Text style={styles.text}>Your Calendar</Text>
       </View>
 
-      {/* Footer for navigation */}
       <Footer navigation={navigation} />
     </View>
   );
@@ -30,7 +28,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    fontSize: 20,
+    fontSize: 16,  // Smaller font size for the screen title text
     marginBottom: 20,
   },
 });
