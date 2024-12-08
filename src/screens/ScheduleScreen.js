@@ -3,15 +3,15 @@ import { View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-nat
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import RNPickerSelect from 'react-native-picker-select'; // Import the color picker
+import DatePicker from "react-datepicker"; //npm install react-datepicker --save
+import "react-datepicker/dist/react-datepicker.css";
 
 const ScheduleScreen = ({ navigation, route }) => {
   const { addTask, editTask, deleteTask, task } = route.params; // Get functions and task from params
 
   // State to store form inputs
-  const [startDate, setStartDate] = useState(task ? task.startDate : '');
-  const [endDate, setEndDate] = useState(task ? task.endDate : '');
-  const [startTime, setStartTime] = useState(task ? task.startTime : '');
-  const [endTime, setEndTime] = useState(task ? task.endTime : '');
+  const [startDate, setStartDate] = useState(task && task.startDate ? new Date(task.startDate) : null);
+  const [endDate, setEndDate] = useState(task && task.endDate ? new Date(task.endDate) : null);
   const [title, setTitle] = useState(task ? task.title : '');
   const [notes, setNotes] = useState(task ? task.notes : '');
   const [color, setColor] = useState(task ? task.color : 'red');
@@ -19,10 +19,8 @@ const ScheduleScreen = ({ navigation, route }) => {
   useEffect(() => {
     if (task) {
       // If we're editing, load the task data into the form
-      setStartDate(task.startDate);
-      setEndDate(task.endDate);
-      setStartTime(task.startTime);
-      setEndTime(task.endTime);
+      setStartDate(task.startDate ? new Date(task.startDate) : null);
+      setEndDate(task.endDate ? new Date(task.endDate) : null);
       setTitle(task.title);
       setNotes(task.notes);
       setColor(task.color);
@@ -30,17 +28,15 @@ const ScheduleScreen = ({ navigation, route }) => {
   }, [task]);
 
   const handleSubmit = () => {
-    if (!title || !startDate || !endDate || !startTime || !endTime) {
+    if (!title || !startDate || !endDate) {
       alert('Please fill all fields');
       return;
     }
 
     const newTask = {
       title,
-      startDate,
-      endDate,
-      startTime,
-      endTime,
+      startDate: startDate.toISOString(), // Saves as an ISO string
+      endDate: endDate.toISOString(),
       notes,
       color,
     };
@@ -73,36 +69,37 @@ const ScheduleScreen = ({ navigation, route }) => {
         />
 
         {/* Start Date Input */}
-        <TextInput
-          style={styles.input}
-          placeholder="Start Date (YYYY-MM-DD)"
-          value={startDate}
-          onChangeText={setStartDate}
-        />
+        <div>
+          <Text>
+            Start Date: 
+          </Text>
+          <br></br>
+          <DatePicker
+            selected={startDate}
+            onChange={(date) => setStartDate(date)}
+            
+            dateFormat="Pp"
+            showTimeSelect
+            isClearable
+          />
+        </div>
 
         {/* End Date Input */}
-        <TextInput
-          style={styles.input}
-          placeholder="End Date (YYYY-MM-DD)"
-          value={endDate}
-          onChangeText={setEndDate}
-        />
-
-        {/* Start Time Input */}
-        <TextInput
-          style={styles.input}
-          placeholder="Start Time (HH:MM)"
-          value={startTime}
-          onChangeText={setStartTime}
-        />
-
-        {/* End Time Input */}
-        <TextInput
-          style={styles.input}
-          placeholder="End Time (HH:MM)"
-          value={endTime}
-          onChangeText={setEndTime}
-        />
+        <div>
+          <Text>
+            End Date: 
+          </Text>
+          <br></br>
+          <DatePicker
+            selected={endDate}
+            onChange={(date) => setEndDate(date)}
+            
+            dateFormat="Pp"
+            showTimeSelect
+            isClearable
+          />
+        </div>
+        <br></br>
 
         {/* Notes Input */}
         <TextInput
@@ -112,6 +109,8 @@ const ScheduleScreen = ({ navigation, route }) => {
           onChangeText={setNotes}
           multiline
         />
+
+        <br></br>
 
         {/* Color Picker */}
         <Text style={styles.label}>Select Task Importance</Text>

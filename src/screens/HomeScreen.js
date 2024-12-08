@@ -51,7 +51,7 @@ const HomeScreen = ({ navigation }) => {
     >
       <Text style={styles.taskTitle}>{item.title}</Text>
       <Text style={styles.taskDate}>
-        {item.endDate} - {item.endTime}
+        {item.startDate} to {item.endDate}
       </Text>
     </TouchableOpacity>
   );
@@ -72,9 +72,9 @@ const HomeScreen = ({ navigation }) => {
 
         {/* Button to navigate to Schedule Screen to Add New Task */}
         <Button title="Add New Task" onPress={navigateToSchedule} />
-
-        <Footer navigation={navigation} />
       </View>
+      
+      <Footer navigation={navigation} />
     </View>
   );
 };
