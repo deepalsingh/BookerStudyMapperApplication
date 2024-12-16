@@ -7,7 +7,7 @@ import DatePicker from "react-datepicker"; //npm install react-datepicker --save
 import "react-datepicker/dist/react-datepicker.css";
 
 const ScheduleScreen = ({ navigation, route }) => {
-  const { addTask, editTask, deleteTask, task } = route.params; // Get functions and task from params
+  const { addTask, editTask, deleteTask, task, tasks } = route.params; // Get functions and task from params
 
   // State to store form inputs
   const [startDate, setStartDate] = useState(task && task.startDate ? new Date(task.startDate) : null);
@@ -34,8 +34,9 @@ const ScheduleScreen = ({ navigation, route }) => {
     }
 
     const newTask = {
+      id: task ? task.id : Date.now(),
       title,
-      startDate: startDate.toISOString(), // Saves as an ISO string
+      startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
       notes,
       color,
@@ -49,8 +50,18 @@ const ScheduleScreen = ({ navigation, route }) => {
       addTask(newTask);
     }
 
-    // Navigate back to the home screen after adding/editing
-    navigation.goBack();
+    // Pass updated tasks back to HomeScreen after adding or editing a task
+    navigation.navigate('Home', {
+      tasks: [...tasks.filter((t) => t.id !== newTask.id), newTask], // Ensure you update tasks here
+    });
+  };
+
+  // Handle Delete Task
+  const handleDelete = () => {
+    if (task) {
+      deleteTask(task);  // Call deleteTask with the current task
+      navigation.navigate('Home')  // Go back to the home screen after deleting
+    };
   };
 
   return (
@@ -69,37 +80,28 @@ const ScheduleScreen = ({ navigation, route }) => {
         />
 
         {/* Start Date Input */}
+        <Text>Start Date: </Text>
         <div>
-          <Text>
-            Start Date: 
-          </Text>
-          <br></br>
-          <DatePicker
-            selected={startDate}
-            onChange={(date) => setStartDate(date)}
-            
-            dateFormat="Pp"
-            showTimeSelect
-            isClearable
-          />
+        <DatePicker
+          selected={startDate}
+          onChange={(date) => setStartDate(date)}
+          dateFormat="Pp"
+          showTimeSelect
+          isClearable
+        />
         </div>
 
         {/* End Date Input */}
+        <Text>End Date: </Text>
         <div>
-          <Text>
-            End Date: 
-          </Text>
-          <br></br>
-          <DatePicker
-            selected={endDate}
-            onChange={(date) => setEndDate(date)}
-            
-            dateFormat="Pp"
-            showTimeSelect
-            isClearable
-          />
+        <DatePicker
+          selected={endDate}
+          onChange={(date) => setEndDate(date)}
+          dateFormat="Pp"
+          showTimeSelect
+          isClearable
+        />
         </div>
-        <br></br>
 
         {/* Notes Input */}
         <TextInput
@@ -109,8 +111,6 @@ const ScheduleScreen = ({ navigation, route }) => {
           onChangeText={setNotes}
           multiline
         />
-
-        <br></br>
 
         {/* Color Picker */}
         <Text style={styles.label}>Select Task Importance</Text>
@@ -123,33 +123,18 @@ const ScheduleScreen = ({ navigation, route }) => {
           value={color}
           items={[
             { label: 'Very Important (Red)', value: 'red' },
-            { label: 'Important (Orange)', value: 'orange' },
-            { label: 'Less Important (Yellow)', value: 'yellow' },
+            { label: 'Moderate (Yellow)', value: 'yellow' },
+            { label: 'Low (Green)', value: 'green' },
           ]}
-          style={{
-            inputAndroid: {
-              paddingVertical: 12,
-              paddingHorizontal: 10,
-              borderWidth: 1,
-              borderColor: '#ccc',
-              borderRadius: 4,
-              marginBottom: 10,
-              fontSize: 16,
-            },
-            inputIOS: {
-              paddingVertical: 12,
-              paddingHorizontal: 10,
-              borderWidth: 1,
-              borderColor: '#ccc',
-              borderRadius: 4,
-              marginBottom: 10,
-              fontSize: 16,
-            },
-          }}
         />
 
         {/* Submit Button */}
-        <Button title={task ? "Save Changes" : "Add Task"} onPress={handleSubmit} />
+        <Button title={task ? 'Save Changes' : 'Add Task'} onPress={handleSubmit} color="#EFB8C8" />
+        
+        {/* Delete Button (only if task exists) */}
+        {task && (
+          <Button title="Delete Task" onPress={handleDelete} color="red" />
+        )}
       </ScrollView>
 
       <Footer navigation={navigation} />
@@ -159,32 +144,28 @@ const ScheduleScreen = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,  // Ensure the container takes up full screen height
-    backgroundColor: '#fff', // Optional: Set background color to white
+    flex: 1,
   },
   scrollContainer: {
-    padding: 20,
-    paddingBottom: 100, // Ensure space at the bottom for footer visibility
-    flexGrow: 1, // Allow ScrollView to grow and fill remaining space
-    paddingTop: 10, // Optional: Add padding on top of the scroll container
+    padding: 15,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginTop: 15,
+    marginBottom: 15, // Equal margin bottom for consistency between inputs
+    paddingLeft: 8,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 10,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-    padding: 10,
-    marginBottom: 10,
-    fontSize: 16,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 10,
   },
 });
 
