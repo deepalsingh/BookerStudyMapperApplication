@@ -45,6 +45,7 @@ const AppNavigator = () => {
         <Stack.Screen 
           name="Calendar" 
           component={CalendarScreen} 
+          initialParams={{ tasks, editTask, deleteTask }} 
         />
       </Stack.Navigator>
     </NavigationContainer>
